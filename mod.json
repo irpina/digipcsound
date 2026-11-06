@@ -1,17 +1,86 @@
 {
- "id": "pcsound", "version": "0.1",
+ "id": "pcsound",
+ "version": "0.2",
  "license": "GPL-2.0-or-later",
- "title": "PROGRAM CHANGE -> SOUND", "category": "MIDI", "author": "irpina",
- "description": "A program change on a synth track's MIDI channel (MIDI CONFIG > CHANNELS) loads that pool sound onto the track, as the SOUND BROWSER's FUNC + YES does: program 1 is pool sound 001, 128 is 128. Such a program change is the mod's: the stock does not also change the pattern for it. Other channels stay the stock's. For the Digitone mk1 and Digitone Keys, OS 1.43 and 1.44 (it names no firmware address: its 1.44 port is empty). Needs core-dn1 5.0.1.",
- "device": "digitone-mk1", "os": "1.43",
- "ports": {"1.44": {}},
- "sources": ["pcsound.c"],
- "cflags": ["-Os", "-fno-tree-loop-distribute-patterns"],
- "subscribe": [
-  {"event": "ev_midi_pc", "fn": "pcs_pc", "order": 50},
-  {"event": "ev_tick", "fn": "pcs_tick", "order": 50},
-  {"event": "ev_draw", "fn": "pcs_draw", "order": 50}
+ "title": "PROGRAM CHANGE -> SOUND",
+ "category": "MIDI",
+ "author": "irpina",
+ "description": "A synth track takes a pool sound from a program change on its MIDI channel (MIDI CONFIG > CHANNELS), or from PRG on TRIG's second page (press TRIG twice): program 1 is pool sound 001, 128 is 128. PRG is per pattern and p-locks per trig (hold the trig and turn): a locked trig plays that sound at once and the track keeps it; a pattern's own PRG loads when the pattern comes up, as an Elektron MIDI track's PROG. A program change it uses is the mod's: the stock does not also change the pattern for it. For the Digitone mk1 and Digitone Keys, OS 1.43 and 1.44 (it names no firmware address: its 1.44 port is empty). Needs core-dn1 5.1.",
+ "device": "digitone-mk1",
+ "os": "1.43",
+ "ports": {
+  "1.44": {}
+ },
+ "sources": [
+  "pcsound.c"
  ],
- "resources": {"core": "5.0.1"},
- "requires": ["core"]
+ "cflags": [
+  "-Os",
+  "-fno-tree-loop-distribute-patterns"
+ ],
+ "subscribe": [
+  {
+   "event": "ev_midi_pc",
+   "fn": "pcs_pc",
+   "order": 50
+  },
+  {
+   "event": "ev_note_built",
+   "fn": "pcs_built",
+   "order": 40
+  },
+  {
+   "event": "ev_voice_on",
+   "fn": "pcs_voice_on",
+   "order": 50
+  },
+  {
+   "event": "ev_tick",
+   "fn": "pcs_tick",
+   "order": 50
+  },
+  {
+   "event": "ev_draw",
+   "fn": "pcs_draw",
+   "order": 50
+  }
+ ],
+ "contribute": [
+  {
+   "to": "core_params",
+   "order": 50,
+   "data": "00000000",
+   "relocs": [
+    [
+     0,
+     "abs32",
+     "sym:pcs_param",
+     0
+    ]
+   ]
+  },
+  {
+   "to": "core_knobs",
+   "order": 50,
+   "data": "00000000",
+   "relocs": [
+    [
+     0,
+     "abs32",
+     "sym:pcs_knob",
+     0
+    ]
+   ]
+  }
+ ],
+ "resources": {
+  "core": "5.1",
+  "names": [
+   "param:185",
+   "knob:30:0"
+  ]
+ },
+ "requires": [
+  "core"
+ ]
 }
